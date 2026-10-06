@@ -1,0 +1,19 @@
+package Ejercicio_3
+public class Main {
+    public static void main(String[] args) {
+        Jugador jugador = new Jugador("Heroe", 100, 5);
+        jugador.agregarItem(new Item("Espada Corta", 1, "Arma", "Una espada basica", 10));
+        jugador.agregarItem(new Item("Pocion de Salud", 3, "Pocion", "Restaura 30 HP", 30));
+        jugador.equiparArma(jugador.getInventario().get(0));
+
+        CombateModel modelo = new CombateModel(jugador);
+        modelo.agregarEnemigo(new Enemigo("Slime Salvaje", 30, 2, "Monstruo"));
+        modelo.agregarEnemigo(new Enemigo("Guerrero Orco", 60, 4, "Guerrero"));
+        modelo.agregarEnemigo(new Enemigo("Dragon", 150, 10, "Jefe"));
+
+        CombateView vista = new CombateView();
+        CombateController controlador = new CombateController(modelo, vista);
+
+        controlador.iniciarJuego();
+    }
+}

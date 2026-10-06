@@ -1,0 +1,30 @@
+package Ejercicio_3;
+import java.util.ArrayList;
+import java.util.List;
+
+public class CombateModel {
+    private Jugador jugador;
+    private List<Enemigo> enemigos;
+    private Enemigo enemigoActual;
+
+    public CombateModel(Jugador jugador) {
+        this.jugador = jugador;
+        this.enemigos = new ArrayList<>();
+    }
+
+    public void agregarEnemigo(Enemigo enemigo) {
+        enemigos.add(enemigo);
+    }
+
+    public Jugador getJugador() { return jugador; }
+    public Enemigo getEnemigoActual() { return enemigoActual; }
+
+    public boolean iniciarSiguienteCombate() {
+        if (!enemigos.isEmpty()) {
+            enemigoActual = enemigos.remove(0);
+            return true;
+        }
+        enemigoActual = null;
+        return false;
+    }
+}

@@ -1,0 +1,34 @@
+package Ejercicio_3;
+import java.util.Random;
+
+public class Enemigo {
+    private String nombre;
+    private int salud;
+    private int nivel;
+    private String tipo;
+    private Random random;
+
+    public Enemigo(String nombre, int salud, int nivel, String tipo) {
+        this.nombre = nombre;
+        this.salud = salud;
+        this.nivel = nivel;
+        this.tipo = tipo;
+        this.random = new Random();
+    }
+
+    public String getNombre() { return nombre; }
+    public int getSalud() { return salud; }
+    public int getNivel() { return nivel; }
+    public String getTipo() { return tipo; }
+
+    public int atacar() {
+        return (nivel * 3) + random.nextInt(5);
+    }
+
+    public void recibirDano(int dano) {
+        salud -= dano;
+        if (salud < 0) salud = 0;
+    }
+
+    public boolean estaVivo() { return salud > 0; }
+}

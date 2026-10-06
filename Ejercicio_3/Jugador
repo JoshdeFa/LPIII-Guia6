@@ -1,0 +1,58 @@
+package Ejercicio_3;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Jugador {
+    private String nombre;
+    private int salud;
+    private int saludMaxima;
+    private int nivel;
+    private List<Item> inventario;
+    private Item armaEquipada;
+
+    public Jugador(String nombre, int saludMaxima, int nivel) {
+        this.nombre = nombre;
+        this.saludMaxima = saludMaxima;
+        this.salud = saludMaxima;
+        this.nivel = nivel;
+        this.inventario = new ArrayList<>();
+    }
+
+    public void agregarItem(Item item) { inventario.add(item); }
+    public List<Item> getInventario() { return inventario; }
+    public String getNombre() { return nombre; }
+    public int getSalud() { return salud; }
+    public int getNivel() { return nivel; }
+    public Item getArmaEquipada() { return armaEquipada; }
+
+    public void equiparArma(Item arma) {
+        if (arma.getTipo().equalsIgnoreCase("Arma")) {
+            this.armaEquipada = arma;
+        }
+    }
+
+    public int atacar() {
+        int danoBase = nivel * 2;
+        if (armaEquipada != null) {
+            danoBase += armaEquipada.getPoder();
+        }
+        return danoBase;
+    }
+
+    public void recibirDano(int dano) {
+        salud -= dano;
+        if (salud < 0) salud = 0;
+    }
+
+    public void usarObjeto(Item item) {
+        if (item.getCantidad() > 0) {
+            if (item.getTipo().equalsIgnoreCase("Pocion")) {
+                salud += item.getPoder();
+                if (salud > saludMaxima) salud = saludMaxima;
+            }
+            item.usarItem();
+        }
+    }
+    
+    public boolean estaVivo() { return salud > 0; }
+}

@@ -1,0 +1,115 @@
+package Ejercicio_3;
+import java.util.Random;
+
+public class CombateController {
+    private CombateModel modelo;
+    private CombateView vista;
+    private Random random;
+
+    public CombateController(CombateModel modelo, CombateView vista) {
+        this.modelo = modelo;
+        this.vista = vista;
+        this.random = new Random();
+    }
+
+    public void iniciarJuego() {
+        vista.mostrarMensaje("¡Iniciando la aventura!");
+        while (modelo.getJugador().estaVivo() && modelo.iniciarSiguienteCombate()) {
+            vista.mostrarMensaje("\n¡Un " + modelo.getEnemigoActual().getNombre() + " salvaje ha aparecido!");
+            bucleCombate();
+        }
+
+        if (modelo.getJugador().estaVivo()) {
+            vista.mostrarMensaje("\n¡Has derrotado a todos los enemigos! ¡Victoria!");
+        } else {
+            vista.mostrarMensaje("\nHas sido derrotado... Fin del juego.");
+        }
+    }
+
+    private void bucleCombate() {
+        Jugador jugador = modelo.getJugador();
+        Enemigo enemigo = modelo.getEnemigoActual();
+        boolean huyendo = false;
+
+        while (jugador.estaVivo() && enemigo.estaVivo() && !huyendo) {
+            vista.mostrarEstado(jugador, enemigo);
+            vista.mostrarMenu();
+            String opcion = vista.solicitarEntrada();
+
+            switch (opcion) {
+                case "1":
+                    int dano = jugador.atacar();
+                    enemigo.recibirDano(dano);
+                    vista.mostrarMensaje("Atacaste al " + enemigo.getNombre() + " causando " + dano + " de daño.");
+                    break;
+                case "2":
+                    usarObjetoMenu();
+                    break;
+                case "3":
+                    equiparArmaMenu();
+                    break;
+                case "0":
+                    huyendo = true;
+                    vista.mostrarMensaje("¡Has huido del combate!");
+                    break;
+                default:
+                    vista.mostrarMensaje("Accion no valida.");
+                    continue;
+            }
+
+            if (enemigo.estaVivo() && !huyendo) {
+                if (random.nextBoolean()) {
+                    int danoEnemigo = enemigo.atacar();
+                    jugador.recibirDano(danoEnemigo);
+                    vista.mostrarMensaje("El " + enemigo.getNombre() + " te ataco causando " + danoEnemigo + " de daño.");
+                } else {
+                    vista.mostrarMensaje("El " + enemigo.getNombre() + " esta esperando... (Oportunidad!)");
+                }
+            }
+        }
+
+        if (!enemigo.estaVivo()) {
+            vista.mostrarMensaje("¡Has derrotado al " + enemigo.getNombre() + "!");
+        }
+    }
+
+    private void usarObjetoMenu() {
+        Jugador jugador = modelo.getJugador();
+        vista.mostrarInventario(jugador.getInventario());
+        vista.mostrarMensaje("Elige el numero del objeto a usar (o 0 para cancelar):");
+        try {
+            int indice = Integer.parseInt(vista.solicitarEntrada()) - 1;
+            if (indice >= 0 && indice < jugador.getInventario().size()) {
+                Item item = jugador.getInventario().get(indice);
+                if (item.getCantidad() > 0) {
+                    jugador.usarObjeto(item);
+                    vista.mostrarMensaje("Has usado: " + item.getNombre());
+                } else {
+                    vista.mostrarMensaje("No te quedan mas " + item.getNombre());
+                }
+            }
+        } catch (NumberFormatException e) {
+            vista.mostrarMensaje("Entrada invalida.");
+        }
+    }
+
+    private void equiparArmaMenu() {
+        Jugador jugador = modelo.getJugador();
+        vista.mostrarInventario(jugador.getInventario());
+        vista.mostrarMensaje("Elige el numero del arma a equipar (o 0 para cancelar):");
+        try {
+            int indice = Integer.parseInt(vista.solicitarEntrada()) - 1;
+            if (indice >= 0 && indice < jugador.getInventario().size()) {
+                Item item = jugador.getInventario().get(indice);
+                if (item.getTipo().equalsIgnoreCase("Arma")) {
+                    jugador.equiparArma(item);
+                    vista.mostrarMensaje("Te has equipado: " + item.getNombre());
+                } else {
+                    vista.mostrarMensaje("Ese objeto no es un arma.");
+                }
+            }
+        } catch (NumberFormatException e) {
+            vista.mostrarMensaje("Entrada invalida.");
+        }
+    }
+}
