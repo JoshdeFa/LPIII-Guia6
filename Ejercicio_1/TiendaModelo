@@ -1,0 +1,67 @@
+package Ejercicio_1;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class TiendaModelo {
+    private List<Producto> inventario;
+    private List<Producto> carrito;
+    private List<String> historialCompras;
+    private double porcentajeDescuento;
+    private double costoEnvio;
+
+    public TiendaModelo() {
+        inventario = new ArrayList<>();
+        carrito = new ArrayList<>();
+        historialCompras = new ArrayList<>();
+        porcentajeDescuento = 0.0;
+        costoEnvio = 0.0;
+    }
+
+    public void agregarProductoInventario(Producto p) { inventario.add(p); }
+    public List<Producto> getInventario() { return inventario; }
+
+    public void agregarAlCarrito(Producto p) { carrito.add(p); }
+    
+    public void eliminarDelCarrito(int index) {
+        if(index >= 0 && index < carrito.size()) {
+            carrito.remove(index);
+        }
+    }
+    
+    public List<Producto> getCarrito() { return carrito; }
+
+    public void aplicarDescuento(double porcentaje) { this.porcentajeDescuento = porcentaje; }
+    public double getPorcentajeDescuento() { return porcentajeDescuento; }
+    
+    public void fijarCostoEnvio(double costo) { this.costoEnvio = costo; }
+    public double getCostoEnvio() { return costoEnvio; }
+
+    public double calcularSubtotal() {
+        double total = 0;
+        for(Producto p : carrito) {
+            total += p.getPrecio();
+        }
+        return total;
+    }
+
+    public double calcularTotal() {
+        double subtotal = calcularSubtotal();
+        double descuento = subtotal * (porcentajeDescuento / 100);
+        return subtotal - descuento + costoEnvio;
+    }
+
+    public void realizarCompra() {
+        if (carrito.isEmpty()) return;
+        
+        double total = calcularTotal();
+        String recibo = "Compra de " + carrito.size() + " artículo(s). Total pagado: $" + String.format("%.2f", total);
+        historialCompras.add(recibo);
+        
+        carrito.clear();
+        porcentajeDescuento = 0.0;
+        costoEnvio = 0.0;
+    }
+
+    public List<String> getHistorial() { return historialCompras; }
+}

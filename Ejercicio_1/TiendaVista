@@ -1,0 +1,73 @@
+package Ejercicio_1;
+
+import java.util.List;
+import java.util.Scanner;
+
+public class TiendaVista {
+    private Scanner scanner;
+
+    public TiendaVista() {
+        scanner = new Scanner(System.in);
+    }
+
+    public void mostrarMenu() {
+        System.out.println("\n=== SISTEMA DE COMPRAS MVC ===");
+        System.out.println("1. Agregar producto al inventario");
+        System.out.println("2. Listar productos disponibles");
+        System.out.println("3. Agregar producto al carrito");
+        System.out.println("4. Ver carrito");
+        System.out.println("5. Eliminar producto del carrito");
+        System.out.println("6. Aplicar porcentaje de descuento");
+        System.out.println("7. Calcular/Asignar costo de envío");
+        System.out.println("8. Realizar compra");
+        System.out.println("9. Ver historial de compras");
+        System.out.println("0. Salir");
+        System.out.print("Seleccione una opción: ");
+    }
+
+    public String solicitarEntrada() {
+        return scanner.nextLine();
+    }
+
+    public void mostrarMensaje(String mensaje) {
+        System.out.println(mensaje);
+    }
+
+    public void mostrarInventario(List<Producto> inventario) {
+        if (inventario.isEmpty()) {
+            System.out.println("No hay productos disponibles.");
+        } else {
+            System.out.println("\n--- Catálogo de Productos ---");
+            for (int i = 0; i < inventario.size(); i++) {
+                System.out.println("[" + i + "] " + inventario.get(i).toString());
+            }
+        }
+    }
+
+    public void mostrarCarrito(List<Producto> carrito, double subtotal, double total, double envio, double descuento) {
+        if (carrito.isEmpty()) {
+            System.out.println("El carrito está vacío.");
+        } else {
+            System.out.println("\n--- Tu Carrito ---");
+            for (int i = 0; i < carrito.size(); i++) {
+                System.out.println("[" + i + "] " + carrito.get(i).toString());
+            }
+            System.out.println("-------------------------");
+            System.out.println("Subtotal: $" + String.format("%.2f", subtotal));
+            System.out.println("Descuento aplicado: " + descuento + "%");
+            System.out.println("Costo de envío: $" + String.format("%.2f", envio));
+            System.out.println("TOTAL A PAGAR: $" + String.format("%.2f", total));
+        }
+    }
+
+    public void mostrarHistorial(List<String> historial) {
+        if (historial.isEmpty()) {
+            System.out.println("Aún no se han realizado compras.");
+        } else {
+            System.out.println("\n--- Historial de Compras ---");
+            for (String registro : historial) {
+                System.out.println("- " + registro);
+            }
+        }
+    }
+}

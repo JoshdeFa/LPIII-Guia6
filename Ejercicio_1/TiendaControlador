@@ -1,0 +1,158 @@
+package Ejercicio_1;
+
+import java.util.List;
+
+public class TiendaControlador {
+    private TiendaModelo modelo;
+    private TiendaVista vista;
+
+    public TiendaControlador(TiendaModelo modelo, TiendaVista vista) {
+        this.modelo = modelo;
+        this.vista = vista;
+    }
+
+    public void iniciar() {
+        modelo.agregarProductoInventario(new Producto("Laptop", 1200.00));
+        modelo.agregarProductoInventario(new Producto("Mouse", 25.50));
+        modelo.agregarProductoInventario(new Producto("Teclado", 45.00));
+
+        String opcion;
+        do {
+            vista.mostrarMenu();
+            opcion = vista.solicitarEntrada();
+
+            switch (opcion) {
+                case "1":
+                    agregarAlInventario();
+                    break;
+                case "2":
+                    vista.mostrarInventario(modelo.getInventario());
+                    break;
+                case "3":
+                    agregarAlCarrito();
+                    break;
+                case "4":
+                    verCarrito();
+                    break;
+                case "5":
+                    eliminarDelCarrito();
+                    break;
+                case "6":
+                    aplicarDescuento();
+                    break;
+                case "7":
+                    fijarEnvio();
+                    break;
+                case "8":
+                    realizarCompra();
+                    break;
+                case "9":
+                    vista.mostrarHistorial(modelo.getHistorial());
+                    break;
+                case "0":
+                    vista.mostrarMensaje("Saliendo del sistema...");
+                    break;
+                default:
+                    vista.mostrarMensaje("Opción inválida. Intente nuevamente.");
+            }
+        } while (!opcion.equals("0"));
+    }
+
+    private void agregarAlInventario() {
+        vista.mostrarMensaje("Nombre del producto:");
+        String nombre = vista.solicitarEntrada();
+        vista.mostrarMensaje("Precio del producto:");
+        try {
+            double precio = Double.parseDouble(vista.solicitarEntrada());
+            modelo.agregarProductoInventario(new Producto(nombre, precio));
+            vista.mostrarMensaje("Producto agregado con éxito.");
+        } catch (NumberFormatException e) {
+            vista.mostrarMensaje("Error: Ingrese un precio válido.");
+        }
+    }
+
+    private void agregarAlCarrito() {
+        vista.mostrarInventario(modelo.getInventario());
+        vista.mostrarMensaje("Ingrese el índice del producto que desea agregar:");
+        try {
+            int index = Integer.parseInt(vista.solicitarEntrada());
+            List<Producto> inv = modelo.getInventario();
+            if (index >= 0 && index < inv.size()) {
+                modelo.agregarAlCarrito(inv.get(index));
+                vista.mostrarMensaje("Agregado al carrito.");
+            } else {
+                vista.mostrarMensaje("Índice fuera de rango.");
+            }
+        } catch (NumberFormatException e) {
+            vista.mostrarMensaje("Error: Ingrese un número válido.");
+        }
+    }
+
+    private void verCarrito() {
+        vista.mostrarCarrito(
+            modelo.getCarrito(), 
+            modelo.calcularSubtotal(), 
+            modelo.calcularTotal(), 
+            modelo.getCostoEnvio(), 
+            modelo.getPorcentajeDescuento()
+        );
+    }
+
+    private void eliminarDelCarrito() {
+        verCarrito();
+        if (!modelo.getCarrito().isEmpty()) {
+            vista.mostrarMensaje("Ingrese el índice del producto a eliminar:");
+            try {
+                int index = Integer.parseInt(vista.solicitarEntrada());
+                if (index >= 0 && index < modelo.getCarrito().size()) {
+                    modelo.eliminarDelCarrito(index);
+                    vista.mostrarMensaje("Producto eliminado del carrito.");
+                } else {
+                    vista.mostrarMensaje("Índice inválido.");
+                }
+            } catch (NumberFormatException e) {
+                vista.mostrarMensaje("Error: Ingrese un número válido.");
+            }
+        }
+    }
+
+    private void aplicarDescuento() {
+        vista.mostrarMensaje("Ingrese el porcentaje de descuento (Ej: 10 para 10%):");
+        try {
+            double descuento = Double.parseDouble(vista.solicitarEntrada());
+            if (descuento >= 0 && descuento <= 100) {
+                modelo.aplicarDescuento(descuento);
+                vista.mostrarMensaje("Descuento aplicado.");
+            } else {
+                vista.mostrarMensaje("El descuento debe estar entre 0 y 100.");
+            }
+        } catch (NumberFormatException e) {
+            vista.mostrarMensaje("Error: Valor inválido.");
+        }
+    }
+
+    private void fijarEnvio() {
+        vista.mostrarMensaje("Ingrese el costo de envío:");
+        try {
+            double envio = Double.parseDouble(vista.solicitarEntrada());
+            if (envio >= 0) {
+                modelo.fijarCostoEnvio(envio);
+                vista.mostrarMensaje("Costo de envío actualizado.");
+            } else {
+                vista.mostrarMensaje("El costo no puede ser negativo.");
+            }
+        } catch (NumberFormatException e) {
+            vista.mostrarMensaje("Error: Valor inválido.");
+        }
+    }
+
+    private void realizarCompra() {
+        if (modelo.getCarrito().isEmpty()) {
+            vista.mostrarMensaje("No puedes comprar con un carrito vacío.");
+            return;
+        }
+        verCarrito();
+        modelo.realizarCompra();
+        vista.mostrarMensaje("\n¡Compra procesada con éxito! Revisa tu historial.");
+    }
+}
